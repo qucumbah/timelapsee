@@ -1,14 +1,18 @@
 package qucumbah;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
+import java.util.Optional;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
@@ -17,9 +21,11 @@ import javafx.scene.control.TextFormatter;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.util.converter.NumberStringConverter;
 
-public class View {
+public class View extends EventEmitter<ActionEvent> {
   private GridPane mainPane = new GridPane();
 
   public View() {
@@ -30,16 +36,6 @@ public class View {
 
   public Scene getScene() {
     return new Scene(mainPane);
-  }
-
-  private Map<String, EventHandler<ActionEvent>> listeners = new HashMap<>();
-
-  public void setEventListener(String eventName, EventHandler<ActionEvent> listener) {
-    listeners.put(eventName, listener);
-  }
-
-  private EventHandler<ActionEvent> getEventListener(String eventName) {
-    return listeners.getOrDefault(eventName, null);
   }
 
   public double readValueAsDouble(String value) {
@@ -195,7 +191,37 @@ public class View {
   }
 
   public void showInvalidInputWarning() {
-    var alert = new Alert(Alert.AlertType.ERROR, "Invalid input value");
+    var alert = new Alert(AlertType.ERROR, "Invalid input value");
     alert.showAndWait();
+  }
+
+  private boolean userWantsToLeaveWithoutSaving() {
+    var alert = new Alert(
+        AlertType.CONFIRMATION,
+        "If you cancel now the results won't be saved. Continue?"
+    );
+
+    Optional<ButtonType> result = alert.showAndWait();
+
+    return result.isPresent() && result.get() == ButtonType.OK;
+  }
+
+  public File getSaveFile() {
+    var fileChooser = new FileChooser();
+    fileChooser.setTitle("Save recording to");
+    fileChooser.getExtensionFilters().addAll(
+        new ExtensionFilter("AVI video file", "*.avi")
+    );
+
+    while (true) {
+      File selectedFile = fileChooser.showSaveDialog(null);
+      if (selectedFile != null) {
+        return selectedFile;
+      }
+      if (userWantsToLeaveWithoutSaving()) {
+        return null;
+      }
+    }
+
   }
 }
