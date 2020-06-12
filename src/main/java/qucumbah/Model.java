@@ -1,6 +1,9 @@
 package qucumbah;
 
+import java.awt.AWTException;
 import java.awt.Toolkit;
+import java.io.File;
+import java.io.IOException;
 import javafx.event.Event;
 
 public class Model extends EventEmitter<Event> {
@@ -10,26 +13,25 @@ public class Model extends EventEmitter<Event> {
 
   private Recorder recorder;
 
-  public Model() {
-    // recorder = new JCodecRecorder();
-  }
-
   private void recordingLoop() {
-    // recorder.startRecording();
+    recorder.startRecording();
     try {
       while (true) {
-        // recorder.recordFrame();
-        Toolkit.getDefaultToolkit().beep();
+        recorder.recordFrame();
         Thread.sleep(frameIntervalMilliseconds, frameIntervalNanoseconds);
       }
     } catch (InterruptedException exception) {
-      // Stop and save recording
+      recorder.saveRecording();
       emit("recordStop", null);
-      Toolkit.getDefaultToolkit().beep();
     }
   }
 
-  public void startRecording(double frameIntervalMillisecondsDouble) {
+  public void startRecording(
+      double frameIntervalMillisecondsDouble,
+      File outputFile
+  ) throws AWTException, IOException {
+    recorder = new JCodecRecorder(outputFile);
+
     frameIntervalMilliseconds = (int)frameIntervalMillisecondsDouble;
     frameIntervalNanoseconds =
         (int)(frameIntervalMillisecondsDouble - frameIntervalMilliseconds);

@@ -198,7 +198,7 @@ public class View extends EventEmitter<ActionEvent> {
   private boolean userWantsToLeaveWithoutSaving() {
     var alert = new Alert(
         AlertType.CONFIRMATION,
-        "If you cancel now the results won't be saved. Continue?"
+        "If you leave now the results won't be saved. Continue?"
     );
 
     Optional<ButtonType> result = alert.showAndWait();
@@ -206,22 +206,21 @@ public class View extends EventEmitter<ActionEvent> {
     return result.isPresent() && result.get() == ButtonType.OK;
   }
 
-  public File getSaveFile() {
+  public File getOutputFile() {
     var fileChooser = new FileChooser();
     fileChooser.setTitle("Save recording to");
     fileChooser.getExtensionFilters().addAll(
         new ExtensionFilter("AVI video file", "*.avi")
     );
 
-    while (true) {
-      File selectedFile = fileChooser.showSaveDialog(null);
-      if (selectedFile != null) {
-        return selectedFile;
-      }
-      if (userWantsToLeaveWithoutSaving()) {
-        return null;
-      }
-    }
+    return fileChooser.showSaveDialog(null);
+  }
 
+  public void showUnknownError(String message) {
+    var alert = new Alert(
+        AlertType.ERROR,
+        message
+    );
+    alert.show();
   }
 }

@@ -1,5 +1,8 @@
 package qucumbah;
 
+import java.awt.AWTException;
+import java.io.File;
+import java.io.IOException;
 import javafx.application.Platform;
 
 public class ViewModel {
@@ -11,7 +14,7 @@ public class ViewModel {
     this.model = model;
   }
 
-  public void start() {
+  public void initialize() {
     view.setEventListener("startModeExit", (event) -> Platform.exit());
     view.setEventListener("recordStart", (event) -> startRecording());
 
@@ -24,9 +27,20 @@ public class ViewModel {
       view.showInvalidInputWarning();
       return;
     }
-    model.startRecording(frameInterval);
-    view.setEventListener("recordStop", (event) -> model.stopRecording());
 
-    view.setRecordMode();
+    File outputFile = view.getOutputFile();
+    if (outputFile == null) {
+      return;
+    }
+
+    try {
+      model.startRecording(frameInterval, outputFile);
+
+      view.setEventListener("recordStop", (event) -> model.stopRecording());
+
+      view.setRecordMode();
+    } catch (IOException | AWTException exception) {
+      view.showUnknownError(exception.getMessage());
+    }
   }
 }

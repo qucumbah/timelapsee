@@ -1,9 +1,6 @@
 package qucumbah;
 
 import javafx.application.Application;
-import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
 public class App extends Application {
@@ -13,7 +10,7 @@ public class App extends Application {
     var model = new Model();
     var viewModel = new ViewModel(view, model);
 
-    viewModel.start();
+    viewModel.initialize();
 
     stage.setScene(view.getScene());
     stage.setTitle("Timelapsee");
