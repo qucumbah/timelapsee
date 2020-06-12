@@ -33,14 +33,18 @@ public class ViewModel {
       return;
     }
 
-    try {
-      model.startRecording(frameInterval, outputFile);
+    model.setEventListener(
+        "recordingError",
+        (event) -> view.showRecordingSuccessMessage()
+    );
+    model.setEventListener("recordingSuccess", (event) -> {
+      view.showRecordingSuccessMessage();
+      Platform.exit();
+    });
+    model.startRecording(frameInterval, outputFile);
 
-      view.setEventListener("recordStop", (event) -> model.stopRecording());
+    view.setEventListener("recordStop", (event) -> model.stopRecording());
 
-      view.setRecordMode();
-    } catch (IOException | AWTException exception) {
-      view.showUnknownError(exception.getMessage());
-    }
+    view.setRecordMode();
   }
 }

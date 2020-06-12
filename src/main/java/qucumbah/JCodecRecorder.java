@@ -37,4 +37,9 @@ public class JCodecRecorder extends Recorder {
   public void saveRecording() throws IOException {
     encoder.finish();
   }
+
+  @Override
+  public void discardRecording() throws IOException {
+    encoder.finish();
+  }
 }

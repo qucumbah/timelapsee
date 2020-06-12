@@ -1,48 +1,56 @@
 package qucumbah;
 
 import java.awt.AWTException;
-import java.awt.Toolkit;
 import java.io.File;
 import java.io.IOException;
 import javafx.event.Event;
 
 public class Model extends EventEmitter<Event> {
-  private Thread recordingThread;
-  private int frameIntervalMilliseconds;
-  private int frameIntervalNanoseconds;
-
   private Recorder recorder;
+  private Timer recordingTimer;
 
-  private void recordingLoop() {
-    recorder.startRecording();
+  public void startRecording(double frameIntervalMillisecondsDouble, File outputFile) {
     try {
-      while (true) {
-        recorder.recordFrame();
-        Thread.sleep(frameIntervalMilliseconds, frameIntervalNanoseconds);
-      }
-    } catch (InterruptedException exception) {
-      recorder.saveRecording();
-      emit("recordStop", null);
+      recorder = new JCodecRecorder(outputFile);
+    } catch (IOException | AWTException exception) {
+      signalRecordingError();
+      return;
     }
-  }
 
-  public void startRecording(
-      double frameIntervalMillisecondsDouble,
-      File outputFile
-  ) throws AWTException, IOException {
-    recorder = new JCodecRecorder(outputFile);
-
-    frameIntervalMilliseconds = (int)frameIntervalMillisecondsDouble;
-    frameIntervalNanoseconds =
+    int frameIntervalMilliseconds = (int)frameIntervalMillisecondsDouble;
+    int frameIntervalNanoseconds =
         (int)(frameIntervalMillisecondsDouble - frameIntervalMilliseconds);
 
-    recordingThread = new Thread(this::recordingLoop);
-    recordingThread.start();
+    Runnable tryToRecordFrame = () -> {
+      try {
+        recorder.recordFrame();
+      } catch (IOException exception) {
+        signalRecordingError();
+      }
+    };
+
+    recordingTimer = new Timer(
+        tryToRecordFrame,
+        frameIntervalMilliseconds,
+        frameIntervalNanoseconds
+    ).start();
   }
 
   public void stopRecording() {
-    recordingThread.interrupt();
+    recordingTimer.stop();
+    try {
+      recorder.saveRecording();
+      signalRecordingSuccess();
+    } catch (IOException exception) {
+      signalRecordingError();
+    }
+  }
 
-    Toolkit.getDefaultToolkit().beep();
+  private void signalRecordingError() {
+    emit("recordingError", null);
+  }
+
+  private void signalRecordingSuccess() {
+    emit("recordingSuccess", null);
   }
 }

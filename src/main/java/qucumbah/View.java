@@ -216,11 +216,19 @@ public class View extends EventEmitter<ActionEvent> {
     return fileChooser.showSaveDialog(null);
   }
 
-  public void showUnknownError(String message) {
+  public void showRecordingErrorMessage() {
     var alert = new Alert(
         AlertType.ERROR,
-        message
+        "Unknown recording error"
     );
-    alert.show();
+    alert.showAndWait();
+  }
+
+  public void showRecordingSuccessMessage() {
+    var alert = new Alert(
+        AlertType.INFORMATION,
+        "Success"
+    );
+    alert.showAndWait();
   }
 }
