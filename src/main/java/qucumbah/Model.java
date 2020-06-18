@@ -17,17 +17,18 @@ public class Model extends EventEmitter<Event> {
       return;
     }
 
-    int frameIntervalMilliseconds = (int)frameIntervalMillisecondsDouble;
-    int frameIntervalNanoseconds =
-        (int)(frameIntervalMillisecondsDouble - frameIntervalMilliseconds);
-
     Runnable tryToRecordFrame = () -> {
       try {
         recorder.recordFrame();
+        emit("frameRecorded", null);
       } catch (IOException exception) {
         signalRecordingError();
       }
     };
+
+    int frameIntervalMilliseconds = (int)frameIntervalMillisecondsDouble;
+    int frameIntervalNanoseconds =
+        (int)((frameIntervalMillisecondsDouble - frameIntervalMilliseconds) * 1000);
 
     recordingTimer = new Timer(
         tryToRecordFrame,

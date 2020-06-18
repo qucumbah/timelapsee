@@ -1,8 +1,6 @@
 package qucumbah;
 
-import java.awt.AWTException;
 import java.io.File;
-import java.io.IOException;
 import javafx.application.Platform;
 
 public class ViewModel {
@@ -22,8 +20,9 @@ public class ViewModel {
   }
 
   private void startRecording() {
-    double frameInterval = view.getFrameIntervalMilliseconds();
-    if (frameInterval < 0) {
+    double frameIntervalMilliseconds = view.getFrameIntervalMilliseconds();
+    final int MIN_FRAME_INTERVAL = 200;
+    if (frameIntervalMilliseconds < MIN_FRAME_INTERVAL) {
       view.showInvalidInputWarning();
       return;
     }
@@ -33,15 +32,24 @@ public class ViewModel {
       return;
     }
 
+    long recordingStartMilliseconds = System.currentTimeMillis();
+    model.setEventListener("frameRecorded", (event) -> {
+      long recordingTimeMilliseconds = System.currentTimeMillis() - recordingStartMilliseconds;
+
+      Platform.runLater(() -> view.updateRecordModeLabels(
+          recordingTimeMilliseconds,
+          (recordingTimeMilliseconds / frameIntervalMilliseconds) * 1000 / 60
+      ));
+    });
     model.setEventListener(
         "recordingError",
-        (event) -> view.showRecordingSuccessMessage()
+        (event) -> view.showRecordingErrorMessage()
     );
     model.setEventListener("recordingSuccess", (event) -> {
       view.showRecordingSuccessMessage();
       Platform.exit();
     });
-    model.startRecording(frameInterval, outputFile);
+    model.startRecording(frameIntervalMilliseconds, outputFile);
 
     view.setEventListener("recordStop", (event) -> model.stopRecording());
 

@@ -1,18 +1,14 @@
 package qucumbah;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Locale;
 
-import java.util.Optional;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
@@ -59,8 +55,7 @@ public class View extends EventEmitter<ActionEvent> {
     period.setValue("Minute");
 
     framesPerUnitOfTimeInput.setTextFormatter(
-        new TextFormatter<>(new NumberStringConverter())
-    );
+        new TextFormatter<>(new NumberStringConverter(Locale.US)));
   }
 
   private double getFramesPerSecond() {
@@ -86,8 +81,7 @@ public class View extends EventEmitter<ActionEvent> {
     time.setValue("Seconds");
 
     timeBetweenFramesInput.setTextFormatter(
-        new TextFormatter<>(new NumberStringConverter())
-    );
+        new TextFormatter<>(new NumberStringConverter(Locale.US)));
   }
 
   private double getSecondsBetweenFrames() {
@@ -158,13 +152,17 @@ public class View extends EventEmitter<ActionEvent> {
   private Label timelapseLengthLabel = new Label("Timelapse length: 0 seconds");
 
   private String beautifyTime(double milliseconds) {
-    double seconds = Math.floor(milliseconds / 1000);
-    double minutes = Math.floor(seconds / 60);
-    double hours = Math.floor(minutes / 60);
+    double secondsRaw = Math.floor(milliseconds / 1000);
+    double minutesRaw = Math.floor(secondsRaw / 60);
+    double hoursRaw = Math.floor(minutesRaw / 60);
 
-    String hoursString = (hours == 0) ? "" : hours + " hours";
-    String minutesString = (minutes == 0) ? "" : hours + " minutes";
-    String secondsString = seconds + " seconds";
+    int hours = (int)(hoursRaw);
+    int minutes = (int)(minutesRaw % 60);
+    int seconds = (int)(secondsRaw % 60);
+
+    String hoursString = (hours == 0) ? "" : hours + " hours ";
+    String minutesString = (minutes == 0) ? "" : minutes + " minutes ";
+    String secondsString = seconds + " seconds ";
 
     return hoursString + minutesString + secondsString;
   }
@@ -174,9 +172,9 @@ public class View extends EventEmitter<ActionEvent> {
       double timelapseLengthMilliseconds
   ) {
     String beautifiedRecordingTime = beautifyTime(recordingTimeMilliseconds);
-    recordingTimeLabel.setText("Recording for:" + beautifiedRecordingTime);
+    recordingTimeLabel.setText("Recording for: " + beautifiedRecordingTime);
     String beautifiedTimelapseLength = beautifyTime(timelapseLengthMilliseconds);
-    timelapseLengthLabel.setText("Timelapse length:" + beautifiedTimelapseLength);
+    timelapseLengthLabel.setText("Timelapse length: " + beautifiedTimelapseLength);
   }
 
   public void setRecordMode() {
@@ -185,7 +183,7 @@ public class View extends EventEmitter<ActionEvent> {
     mainPane.add(new Label("Recording in process"), 0, 0);
     mainPane.add(recordingTimeLabel, 0, 1);
     mainPane.add(timelapseLengthLabel, 0, 2);
-    var stopButton = new Button("Stop and save/discard");
+    var stopButton = new Button("Stop and save");
     stopButton.onActionProperty().setValue(getEventListener("recordStop"));
     mainPane.add(stopButton, 0, 3);
   }
@@ -195,22 +193,11 @@ public class View extends EventEmitter<ActionEvent> {
     alert.showAndWait();
   }
 
-  private boolean userWantsToLeaveWithoutSaving() {
-    var alert = new Alert(
-        AlertType.CONFIRMATION,
-        "If you leave now the results won't be saved. Continue?"
-    );
-
-    Optional<ButtonType> result = alert.showAndWait();
-
-    return result.isPresent() && result.get() == ButtonType.OK;
-  }
-
   public File getOutputFile() {
     var fileChooser = new FileChooser();
     fileChooser.setTitle("Save recording to");
     fileChooser.getExtensionFilters().addAll(
-        new ExtensionFilter("AVI video file", "*.avi")
+        new ExtensionFilter("MP4 video file", "*.mp4")
     );
 
     return fileChooser.showSaveDialog(null);
