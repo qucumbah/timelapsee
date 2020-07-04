@@ -2,26 +2,24 @@ package qucumbah;
 
 import java.util.HashMap;
 import java.util.Map;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 
-public abstract class EventEmitter<T extends Event> {
-  private final Map<String, EventHandler<T>> listeners = new HashMap<>();
+public abstract class EventEmitter {
+  private final Map<String, Runnable> handlers = new HashMap<>();
 
-  protected final EventHandler<T> getEventListener(String eventName) {
-    return listeners.getOrDefault(eventName, null);
+  protected Runnable getEventHandler(String eventName) {
+    return handlers.getOrDefault(eventName, null);
   }
 
-  protected final void emit(String eventName, T event) {
-    EventHandler<T> handler = getEventListener(eventName);
+  protected void signal(String eventName) {
+    Runnable handler = getEventHandler(eventName);
     if (handler == null) {
       return;
     }
 
-    handler.handle(event);
+    handler.run();
   }
 
-  public final void setEventListener(String eventName, EventHandler<T> listener) {
-    listeners.put(eventName, listener);
+  public void setEventHandler(String eventName, Runnable handler) {
+    handlers.put(eventName, handler);
   }
 }

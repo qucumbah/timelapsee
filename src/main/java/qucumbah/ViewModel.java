@@ -13,8 +13,8 @@ public class ViewModel {
   }
 
   public void initialize() {
-    view.setEventListener("startModeExit", (event) -> Platform.exit());
-    view.setEventListener("recordStart", (event) -> startRecording());
+    view.setEventHandler("startModeExit", Platform::exit);
+    view.setEventHandler("recordStart", this::startRecording);
 
     view.setStartMode();
   }
@@ -33,25 +33,23 @@ public class ViewModel {
     }
 
     long recordingStartMilliseconds = System.currentTimeMillis();
-    model.setEventListener("frameRecorded", (event) -> {
+    model.setEventHandler("frameRecorded", () -> {
       long recordingTimeMilliseconds = System.currentTimeMillis() - recordingStartMilliseconds;
 
-      Platform.runLater(() -> view.updateRecordModeLabels(
+      Platform.runLater(() -> view.updateRecordTimeLabels(
           recordingTimeMilliseconds,
           (recordingTimeMilliseconds / frameIntervalMilliseconds) * 1000 / 60
       ));
     });
-    model.setEventListener(
-        "recordingError",
-        (event) -> view.showRecordingErrorMessage()
-    );
-    model.setEventListener("recordingSuccess", (event) -> {
+    model.setEventHandler("recordingError", () -> view.showRecordingErrorMessage());
+    model.setEventHandler("recordingSuccess", () -> {
       view.showRecordingSuccessMessage();
       Platform.exit();
     });
+
     model.startRecording(frameIntervalMilliseconds, outputFile);
 
-    view.setEventListener("recordStop", (event) -> model.stopRecording());
+    view.setEventHandler("recordStop", () -> model.stopRecording());
 
     view.setRecordMode();
   }
