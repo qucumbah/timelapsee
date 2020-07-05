@@ -16,7 +16,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.util.converter.NumberStringConverter;
 
-public class StartModeView {
+public class StartModeViewContent extends ViewContent {
   private TextField framesPerUnitOfTimeInput = new TextField();
   private ComboBox<String> unit = new ComboBox<>();
   private ComboBox<String> period = new ComboBox<>();
@@ -134,6 +134,7 @@ public class StartModeView {
     mainPane.add(startAndStopButtonsContainer, 0, 4);
   }
 
+  @Override
   public void bindHandlers(Map<String, EventHandler<ActionEvent>> handlers) {
     EventHandler<ActionEvent> recordStartHandler = handlers.getOrDefault("recordStart", null);
     EventHandler<ActionEvent> startModeExitHandler = handlers.getOrDefault("startModeExit", null);
@@ -142,7 +143,8 @@ public class StartModeView {
     exitButton.onActionProperty().setValue(startModeExitHandler);
   }
 
-  public GridPane getMainPane() {
+  @Override
+  public GridPane getRoot() {
     return mainPane;
   }
 }

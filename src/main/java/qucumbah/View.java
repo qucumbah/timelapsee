@@ -9,45 +9,45 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 
 public class View extends JavaFXEventEmitterAdapter {
-  private StartModeView startModeView;
-  private RecordModeView recordModeView;
+  private StartModeViewContent startModeContent;
+  private RecordModeViewContent recordModeContent;
   private Scene mainScene;
 
   public Scene getScene() {
     return mainScene;
   }
 
-  public void setStartMode() {
-    startModeView = new StartModeView();
-    startModeView.bindHandlers(this.eventHandlers);
+  private void setModeView(ViewContent newModeView) {
+    newModeView.bindHandlers(this.eventHandlers);
 
     if (mainScene == null) {
-      mainScene = new Scene(startModeView.getMainPane());
+      mainScene = new Scene(newModeView.getRoot());
     } else {
-      mainScene.setRoot(startModeView.getMainPane());
+      mainScene.setRoot(newModeView.getRoot());
     }
+  }
+
+  public void setStartMode() {
+    startModeContent = new StartModeViewContent();
+
+    setModeView(startModeContent);
   }
 
   public void setRecordMode() {
-    recordModeView = new RecordModeView();
-    recordModeView.bindHandlers(this.eventHandlers);
+    recordModeContent = new RecordModeViewContent();
 
-    if (mainScene == null) {
-      mainScene = new Scene(recordModeView.getMainPane());
-    } else {
-      mainScene.setRoot(recordModeView.getMainPane());
-    }
+    setModeView(recordModeContent);
   }
 
   public double getFrameIntervalMilliseconds() {
-    return startModeView.getFrameIntervalMilliseconds();
+    return startModeContent.getFrameIntervalMilliseconds();
   }
 
   public void updateRecordTimeLabels(
       double recordingTimeMilliseconds,
       double timelapseLengthMilliseconds
   ) {
-    recordModeView.updateRecordTimeLabels(recordingTimeMilliseconds, timelapseLengthMilliseconds);
+    recordModeContent.updateRecordTimeLabels(recordingTimeMilliseconds, timelapseLengthMilliseconds);
   }
 
   public void showInvalidInputWarning() {

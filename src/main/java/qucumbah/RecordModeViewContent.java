@@ -8,7 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 
-public class RecordModeView {
+public class RecordModeViewContent extends ViewContent {
   private Label recordingTimeLabel = new Label("Recording for: 0 seconds");
   private Label timelapseLengthLabel = new Label("Timelapse length: 0 seconds");
 
@@ -53,12 +53,14 @@ public class RecordModeView {
     timelapseLengthLabel.setText("Timelapse length: " + beautifiedTimelapseLength);
   }
 
+  @Override
   public void bindHandlers(Map<String, EventHandler<ActionEvent>> handlers) {
     EventHandler<ActionEvent> recordStopHandler = handlers.getOrDefault("recordStop", null);
     stopButton.onActionProperty().setValue(recordStopHandler);
   }
 
-  public GridPane getMainPane() {
+  @Override
+  public GridPane getRoot() {
     return mainPane;
   }
 }
