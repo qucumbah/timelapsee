@@ -1,4 +1,4 @@
-package qucumbah;
+package qucumbah.model;
 
 import java.awt.AWTException;
 import java.awt.Rectangle;

@@ -1,4 +1,4 @@
-package qucumbah;
+package qucumbah.view;
 
 import java.util.Map;
 import javafx.event.ActionEvent;

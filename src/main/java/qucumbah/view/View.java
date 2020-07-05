@@ -1,4 +1,4 @@
-package qucumbah;
+package qucumbah.view;
 
 import java.io.File;
 
@@ -7,6 +7,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+import qucumbah.util.JavaFXEventEmitterAdapter;
 
 public class View extends JavaFXEventEmitterAdapter {
   private StartModeViewContent startModeContent;

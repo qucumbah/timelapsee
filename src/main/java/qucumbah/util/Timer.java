@@ -1,4 +1,4 @@
-package qucumbah;
+package qucumbah.util;
 
 public class Timer {
   private Runnable action;

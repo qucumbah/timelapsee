@@ -1,4 +1,4 @@
-package qucumbah;
+package qucumbah.util;
 
 import java.util.HashMap;
 import java.util.Map;

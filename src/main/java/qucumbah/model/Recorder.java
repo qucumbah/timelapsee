@@ -1,4 +1,4 @@
-package qucumbah;
+package qucumbah.model;
 
 import java.io.IOException;
 

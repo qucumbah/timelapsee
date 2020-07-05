@@ -1,4 +1,4 @@
-package qucumbah;
+package qucumbah.view;
 
 import java.util.Locale;
 import java.util.Map;

@@ -1,7 +1,9 @@
-package qucumbah;
+package qucumbah.viewmodel;
 
 import java.io.File;
 import javafx.application.Platform;
+import qucumbah.model.Model;
+import qucumbah.view.View;
 
 public class ViewModel {
   private View view;

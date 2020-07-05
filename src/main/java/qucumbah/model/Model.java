@@ -1,8 +1,10 @@
-package qucumbah;
+package qucumbah.model;
 
 import java.awt.AWTException;
 import java.io.File;
 import java.io.IOException;
+import qucumbah.util.EventEmitter;
+import qucumbah.util.Timer;
 
 public class Model extends EventEmitter {
   private Recorder recorder;

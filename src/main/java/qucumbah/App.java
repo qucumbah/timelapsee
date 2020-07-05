@@ -2,6 +2,9 @@ package qucumbah;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
+import qucumbah.model.Model;
+import qucumbah.view.View;
+import qucumbah.viewmodel.ViewModel;
 
 public class App extends Application {
   @Override
